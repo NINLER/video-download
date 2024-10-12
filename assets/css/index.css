@@ -1,0 +1,271 @@
+:root {
+    --bg-color:#191b1e;
+    --left-bar-width: 75px;
+    --left-bar-color: rgb(29, 33, 37);
+    --left-bar-hover-color: rgba(66, 75, 85, 0.288);
+    --left-bar-active-color: rgba(66, 75, 85, 0.753);
+    --search-left-offset: 185px;
+}
+
+body {
+    background-color: var(--bg-color);
+    font-family: consolas;
+}
+
+a {
+    transition: all ease 0.3s;
+    text-decoration: none;
+    color:#3575ff;
+}
+
+a:hover {
+    color:#35bdff;
+    text-decoration: none;
+}
+
+hr {
+    background: white;
+}
+
+/* Left bar */
+
+.left-bar {
+    transition: all ease 0.4s;
+    width:var(--left-bar-width);
+    height:100000pt;
+    /* border: var(--left-bar-color) 2pt solid; */
+    background-color: var(--left-bar-color);
+    border-top: 0;
+    border-bottom: 0;
+    padding: 0;
+    position:fixed;
+    top:0; left:0;
+    overflow-x: hidden;
+}
+
+.left-item {
+    color:white;
+    display: grid;
+    place-items: center;
+    height: var(--left-bar-width);
+    width: var(--left-bar-width);
+    transition: all ease 0.35s;
+    padding: 0;
+}
+
+.left-item-inner {
+    transition: all ease 0.35s;
+    overflow-y: hidden;
+    margin-top: 3px;
+    height: 35px;
+    z-index: 100;
+}
+
+.left-item:hover .left-item-inner {
+    height: 55px;
+}
+
+.left-item:hover {
+    background-color: var(--left-bar-hover-color);
+}
+
+.left-item-inner > p {
+    font-size:14px;
+}
+
+.left-item-inner > div,p {
+    display: block;
+    user-select: none;
+}
+
+.left-hover {
+    position:fixed;
+    transition: all ease-in-out 0.15s;
+    top: 0px; left: 0; z-index: 50;
+    background-color: var(--left-bar-active-color);
+    height: var(--left-bar-width);
+    width: var(--left-bar-width);
+    pointer-events: none;
+}
+
+/* Page Config */
+
+.page {
+    transition: all cubic-bezier(0.22, 0.61, 0.36, 1) 0.15s;
+    width: calc( 100vw - var(--left-bar-width) - 40px );
+    position: fixed;
+    left: calc( var(--left-bar-width) + 20px ); top: 100vh;
+    margin: 0; color:white; opacity: 0;
+}
+
+.page.active {
+    top: 0 !important;
+    opacity: 1 !important;
+}
+
+/* Search Page */
+
+.form-control {
+    background-color: var(--bg-color);
+    border-color: var(--primary);
+    color:white;
+}
+
+.form-control:focus {
+    background-color: var(--bg-color);
+    color:white;
+}
+
+.form-control:-moz-placeholder {
+    color: grey;
+}
+
+#searchResult {
+    overflow-y: auto;
+    max-height: calc( 100vh - 40px - 32px );
+}
+
+#searchResult::-webkit-scrollbar {
+    background-color: #0000;
+    width:6pt;
+}
+
+#searchResult::-webkit-scrollbar-thumb {
+    background-color: #aaa;
+    border-radius: 3pt;
+}
+
+.result-blank {
+    width: calc( 100% - 5px );
+    height: 102px;
+    margin-top: 10pt;
+    border-radius: 5pt;
+    position: relative;
+    border: gray solid 1px;
+    transition: all ease 0.25s;
+}
+
+.result-blank:hover {
+    background-color: #3575ff24;
+}
+
+.result-blank:active {
+    transition: all ease 0.05s;
+    background-color: #3575ff48;
+}
+
+.result-blank > img {
+    border-radius: 5pt;
+    width: var(--search-left-offset);
+    height: 100px;
+    display: inline-block;
+    user-select: none;
+}
+
+.result-blank > p {
+    width: calc( 100% - var(--search-left-offset) - 14px );
+    left: calc( var(--search-left-offset) + 14px );
+    top: 20px;
+    display: inline-block;
+    position: absolute;
+    user-select: none;
+    font-size: 10pt;
+}
+
+.result-blank > span {
+    color:gray;
+    font-size: 10pt;
+    position: absolute;
+    user-select: none;
+    left: calc( var(--search-left-offset) + 14px );
+    display: inline-block;
+}
+
+.result-blank > span:nth-child(4) {
+    bottom: calc( 5px + 10pt + 3pt );
+}
+
+.result-blank > span:nth-child(5) {
+    bottom: calc( 3px );
+}
+
+.result-blank > div {
+    position: absolute;
+    display: inline-block;
+    user-select: none;
+    font-size: 10pt;
+    color: rgb(117, 160, 134);
+    right: 10px;
+    bottom: 3px;
+    margin: 0;
+}
+
+/* Download Page */
+
+.download-task {
+    width: calc( 100% - 5px );
+    margin-bottom: 10pt;
+    border-radius: 5pt;
+    position: relative;
+    border: gray solid 1px;
+    padding: 10pt;
+}
+
+.download-task > .progress {
+    margin-top: 10pt;
+}
+
+.download-task > .cancel {
+    position: absolute;
+    transition: all ease 0.25s;
+    user-select: none;
+    top:10pt;
+    right:10pt;
+    color: rgb(255 73 0);
+}
+
+.download-task > div:nth-child(1) {
+    width: calc( 100% - 20pt );
+}
+
+.download-task > .cancel:hover {
+    color: rgb(255, 153, 0);
+}
+
+.taskText {
+    color: #78a3ff;
+}
+
+.download-task.active {
+    transition: all ease 2s;
+    opacity: 0;
+}
+
+.progress-bar {
+    transition: width 0.15s ease;
+}
+
+.progress-bar.active {
+    transition: width 3s ease !important;
+}
+
+#openFolder {
+    transition: all ease 0.25s;
+    color: rgb(76, 151, 0);
+    position: absolute;
+    top:20pt;
+    right:10pt;
+}
+
+#openFolder:hover {
+    color: chartreuse;
+}
+
+#download {
+    overflow-y: auto;
+    max-height: 100vh;
+}
+
+#download::-webkit-scrollbar {
+    display: none;
+}

@@ -1,0 +1,14 @@
+{
+    "name": "bilibilidownload",
+    "version": "1.0.0",
+    "description": "A downloader for bilibili",
+    "main": "index.html",
+    "scripts": {
+        "dev": "nw ."
+    },
+    "author": "QuietBlue",
+    "license": "ISC",
+    "dependencies": {
+        "request": "^2.88.2"
+    }
+}

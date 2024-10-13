@@ -29,9 +29,9 @@ function renderResult(pid,clear)
     let blanks=document.querySelectorAll('.result-blank');
     for(let it of blanks)
         it.addEventListener('click',()=>{
-            downloadVideo(it.getAttribute('to'));
             if(!window.confirm("\nAre you sure to download video "+it.getAttribute('title')+" ?")) return;
             changePage(document.getElementById('toDownload'));
+            downloadVideo(it.getAttribute('to'));
         });
     searching=false;
     return;
@@ -67,13 +67,52 @@ function searchContent(content,page=1,clear=true)
     return;
 }
 
+function checkVideo(url)
+{
+    return new Promise((res,rej)=>{
+        if(url.match(/^BV([0-9a-zA-Z]*)$/)||url.match(/^av([0-9]*)$/))
+        {
+            console.log(url);
+            url="https://www.bilibili.com/video/"+url+'/';
+            fetch(url).then(async (resp)=>{
+                let body=await resp.text();
+                let title=body.match(/<title data-vue-meta="true">([^<]*)<\/title>/).at(1);
+                console.log(title,resp); console.log(body);
+                return res({status:true,title:title,url:url});
+            });
+        }
+        else if(url.match(/^(?:https:\/\/|)(?:www\.|)bilibili\.com\/video\/(.*)$/))
+        {
+            if(url.indexOf('www.')==-1) url="www."+url;
+            if(url.indexOf('https://')==-1) url="https://"+url;
+            fetch(url).then(async (resp)=>{
+                let body=await resp.text();
+                // console.log(body);
+                let title=body.match(/"pic":"[^"]+","title":"([^"]+)"/).at(1);
+                return res({status:true,title:title,url:url});
+            });
+        }
+        else return res({status:false});
+    });
+}
+
 (()=>{
-    document.getElementById('searchBar').addEventListener('keypress',(event)=>{
+    document.getElementById('searchBar').addEventListener('keypress',async (event)=>{
         let tar=event.key;
         if(tar=="Enter")
         {
-            document.getElementById('searchResult').innerHTML="<br>Fetching ...";
-            searchContent(document.getElementById('searchBar').value,1);
+            let result=await checkVideo(document.getElementById('searchBar').value);
+            console.log(result);
+            if(result.status)
+            {
+                if(!window.confirm("\nAre you sure to download video "+result.title+" ?")) return;
+                changePage(document.getElementById('toDownload')); downloadVideo(result.url);
+            }
+            else
+            {
+                document.getElementById('searchResult').innerHTML="<br>Fetching ...";
+                searchContent(document.getElementById('searchBar').value,1);
+            }
         }
     });
     document.getElementById('searchResult').addEventListener('scroll',(event)=>{

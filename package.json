@@ -11,8 +11,5 @@
   "license": "ISC",
   "dependencies": {
     "request": "^2.88.2"
-  },
-  "devDependencies": {
-    "nwjs-builder-phoenix": "^1.15.0"
   }
 }

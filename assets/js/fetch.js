@@ -3,6 +3,7 @@ const {exec}=require('child_process');
 const request=require('request');
 const path=require('node:path');
 const fs=require('node:fs');
+const os=require('node:os');
 
 const config={
     "headers":{
@@ -11,8 +12,8 @@ const config={
     }
 };
 
+var localUrl=`C:\\Users\\${os.userInfo().username}\\Documents\\videoDownload`;
 var totSize=0,nowSize=0,nowTasks=0,taskTot=0,taskProgress=[0];
-var localUrl=".\\video";
 
 function getUrl(url)
 {

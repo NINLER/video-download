@@ -51,13 +51,12 @@ function searchContent(content,page=1,clear=true)
             let data=xhr.response;
             source=data.match(/<source srcset="([^"]+)" type="image\/webp"><img src="([^"]+)" alt="([^"]+)" loading="lazy" onload onerror="typeof window\.imgOnError === &#39;function&#39; &amp;&amp; window\.imgOnError\(this\)">/gm);
             source=source.map(it=>it.match(/<source srcset="([^"]+)" type="image\/webp"><img src="([^"]+)" alt="([^"]+)" loading="lazy" onload onerror="typeof window\.imgOnError === &#39;function&#39; &amp;&amp; window\.imgOnError\(this\)">/).slice(1,4));
-            sourceUrl=data.match(/<a href="([^"]+)" class="" target="_blank" data-v-4caf9c8c>/gm);
-            sourceUrl=sourceUrl.map(it=>it.match(/<a href="([^"]+)" class="" target="_blank" data-v-4caf9c8c>/).at(1));
-            duration=data.match(/class="bili-video-card__stats__duration" data-v-4caf9c8c>([0-9:]+)<\/span><!--]-->/gm);
-            duration=duration.map(it=>it.match(/class="bili-video-card__stats__duration" data-v-4caf9c8c>([0-9:]+)<\/span><!--]-->/).at(1));
-            author=data.match(/<span class="bili-video-card__info--author" data-v-4caf9c8c>([^<]+)<\/span>/gm);
-            author=author.map(it=>it.match(/<span class="bili-video-card__info--author" data-v-4caf9c8c>([^<]+)<\/span>/).at(1));
-            // console.log(source,sourceUrl);
+            sourceUrl=data.match(/<a href="([^"]+)" class="" target="_blank" data-v-[\d\w]+>/gm);
+            sourceUrl=sourceUrl.map(it=>it.match(/<a href="([^"]+)" class="" target="_blank" data-v-[\d\w]+>/).at(1));
+            duration=data.match(/class="bili-video-card__stats__duration" data-v-[\d\w]+>([0-9:]+)<\/span><!--]-->/gm);
+            duration=duration.map(it=>it.match(/class="bili-video-card__stats__duration" data-v-[\d\w]+>([0-9:]+)<\/span><!--]-->/).at(1));
+            author=data.match(/<span class="bili-video-card__info--author" data-v-[\d\w]+>([^<]+)<\/span>/gm);
+            author=author.map(it=>it.match(/<span class="bili-video-card__info--author" data-v-[\d\w]+>([^<]+)<\/span>/).at(1));
             renderResult(page,clear);
         } catch(err) {
             document.getElementById('searchResult').innerHTML="<br>No video.";
@@ -67,7 +66,7 @@ function searchContent(content,page=1,clear=true)
     return;
 }
 
-function checkVideo(url)
+function checkVideo(url="")
 {
     return new Promise((res,rej)=>{
         if(url.match(/^BV([0-9a-zA-Z]*)$/)||url.match(/^av([0-9]*)$/))
@@ -83,6 +82,7 @@ function checkVideo(url)
         }
         else if(url.match(/^(?:https:\/\/|)(?:www\.|)bilibili\.com\/video\/(.*)$/))
         {
+            if(url.indexOf('?')!=-1) url=url.substring(0,url.indexOf('?'));
             if(url.indexOf('www.')==-1) url="www."+url;
             if(url.indexOf('https://')==-1) url="https://"+url;
             fetch(url).then(async (resp)=>{

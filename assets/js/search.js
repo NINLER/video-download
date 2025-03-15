@@ -1,5 +1,7 @@
-let source,sourceUrl,duration,author,searching=false,loaded=new Set();
-// source [img,img,title]
+const cheerio=require('cheerio');
+
+let source=[],sourceUrl=[],duration=[],author=[],searching=false,loaded=new Set();
+// source [img,title]
 
 function renderResult(pid,clear)
 {
@@ -8,8 +10,8 @@ function renderResult(pid,clear)
     else target.innerHTML=target.innerHTML.split('<div id="moreContents"').at(0);
     for(let i=0; i<source.length; i++)
     {
-        const img=source[i][1];
-        const title=source[i][2];
+        const img=source[i][0];
+        const title=source[i][1];
         const time=duration[i];
         const url=sourceUrl[i];
         const maker=author[i];
@@ -49,16 +51,29 @@ function searchContent(content,page=1,clear=true)
         // console.log(xhr.response);
         try {
             let data=xhr.response;
-            source=data.match(/<source srcset="([^"]+)" type="image\/webp"><img src="([^"]+)" alt="([^"]+)" loading="lazy" onload onerror="typeof window\.imgOnError === &#39;function&#39; &amp;&amp; window\.imgOnError\(this\)">/gm);
-            source=source.map(it=>it.match(/<source srcset="([^"]+)" type="image\/webp"><img src="([^"]+)" alt="([^"]+)" loading="lazy" onload onerror="typeof window\.imgOnError === &#39;function&#39; &amp;&amp; window\.imgOnError\(this\)">/).slice(1,4));
-            sourceUrl=data.match(/<a href="([^"]+)" class="" target="_blank" data-v-[\d\w]+>/gm);
-            sourceUrl=sourceUrl.map(it=>it.match(/<a href="([^"]+)" class="" target="_blank" data-v-[\d\w]+>/).at(1));
-            duration=data.match(/class="bili-video-card__stats__duration" data-v-[\d\w]+>([0-9:]+)<\/span><!--]-->/gm);
-            duration=duration.map(it=>it.match(/class="bili-video-card__stats__duration" data-v-[\d\w]+>([0-9:]+)<\/span><!--]-->/).at(1));
-            author=data.match(/<span class="bili-video-card__info--author" data-v-[\d\w]+>([^<]+)<\/span>/gm);
-            author=author.map(it=>it.match(/<span class="bili-video-card__info--author" data-v-[\d\w]+>([^<]+)<\/span>/).at(1));
+            let $=cheerio.load(data);
+            // console.log($('.video.i_wrapper.search-all-list'),$('.search-page.search-page-video.i_wrapper.mt_xxl.pb_xxl'));
+            let $video=$('.video.i_wrapper.search-all-list');
+            if(!$video.length) $video=$('.search-page.search-page-video.i_wrapper.mt_xxl.pb_xxl');
+            $video=$video.children()[0].children;
+            // console.log($video);
+            source=[],sourceUrl=[],duration=[],author=[];
+            for(let i=1; i<$video.length-1; i++)
+            {
+                let it=$video[i]; if(it?.attribs?.class=="load-more-trigger") continue;
+                let temp1=it?.children?.at(0)?.children?.at(1)?.children?.at(1)?.children?.at(0)?.children?.at(0)?.children?.at(1)?.children?.at(3);
+                let temp2=it?.children?.at(0)?.children?.at(1)?.children?.at(1)?.children?.at(0)?.children?.at(1)?.children?.at(0);
+                let name=temp1?.attribs?.alt,img=temp1?.attribs?.src;
+                if(!name||!temp2?.children) continue;
+                let dur=temp2?.children?.at(2)?.children?.at(0).data;
+                let auth=it?.children?.at(0)?.children?.at(1)?.children?.at(2)?.children?.at(2)?.children?.at(2)?.children?.at(0)?.children?.at(1)?.children?.at(0).data;
+                let link=it?.children?.at(0)?.children?.at(1)?.children?.at(2)?.children?.at(2)?.children?.at(0)?.attribs?.href;
+                // console.log(i,name,img,dur,auth,link);
+                source.push([img,name]); sourceUrl.push(link); duration.push(dur); author.push(auth);
+            }
             renderResult(page,clear);
         } catch(err) {
+            console.log(err);
             document.getElementById('searchResult').innerHTML="<br>No video.";
             searching=false;
         }

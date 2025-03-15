@@ -2,6 +2,10 @@ const root=document.documentElement;
 const win=nw.Window.get();
 
 var nowPage=document.getElementById('homepage');
+var bottomBar=document.getElementsByClassName('bottom-bar').item(0);
+
+//   nowPage : page now is activated.
+// bottomBar : the bottom bar.
 
 function changePage(it)
 {
@@ -12,9 +16,12 @@ function changePage(it)
     lst.style.top=val*(cnt-1)+'px';
     // page select
     let newpage=document.getElementById(it.getAttribute('to'));
-    // console.log(nowPage,newpage);
     if(nowPage!=newpage)
+    {
         nowPage.classList.toggle("active"),newpage.classList.toggle("active");
+        if(cnt!=3&&nowTasks) bottomBar.classList.add('active');
+        else bottomBar.classList.remove('active');
+    }
     nowPage=newpage;
     return;
 }

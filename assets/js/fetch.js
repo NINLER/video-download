@@ -15,6 +15,13 @@ const config={
 var localUrl=`C:\\Users\\${os.userInfo().username}\\Documents\\videoDownload`;
 var totSize=0,nowSize=0,nowTasks=0,taskTot=0,taskProgress=[0];
 
+//     localUrl : video url
+//      totSize : file total size
+//      nowSize : downloaded total size
+//     nowTasks : the number of tasks
+//      taskTot : task id counter
+// taskProgress : the progress of each task
+
 function getUrl(url)
 {
     return new Promise((res,rej)=>{
@@ -116,6 +123,8 @@ function renderProgress(taskid=0,chunk=0,totchunk=0)
     document.getElementById('totalProgressWord').innerText=`Total progress : (${progress}%)`;
     document.getElementById('totalTaskWord').innerText=`Tasks : ${nowTasks}`;
     document.getElementById('totalProgressBar').style.width=`${progress}%`;
+    document.getElementsByClassName('bottom-bar').item(0).children.item(0).innerText=`Tasks : ${nowTasks}`;
+    document.getElementsByClassName('bottom-bar').item(0).children.item(1).innerText=`Progress : ${progress}%`;
     return;
 }
 
@@ -159,6 +168,7 @@ function removeTask(nid,totchunk)
             renderProgress();
         },1000);
         window.setTimeout(()=>{document.getElementById('totalProgressBar').classList.toggle('active');},4000);
+        document.getElementsByClassName('bottom-bar').item(0).classList.remove('active');
     }
     return nid;
 }

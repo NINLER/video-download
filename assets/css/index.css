@@ -269,3 +269,27 @@ hr {
 #download::-webkit-scrollbar {
     display: none;
 }
+
+/* Bottom bar */
+
+.bottom-bar {
+    position: fixed;
+    transition: all ease 0.25s;
+    bottom:-50pt;
+    margin-left: var(--left-bar-width);
+    color:white;
+    width: calc( 100% - var(--left-bar-width) );
+    height:50pt;
+    border-top-left-radius: 10pt;
+    border-top-right-radius: 10pt;
+    border-top:#555555 solid 1pt;
+    border-left:#555555 solid 1pt;
+    border-right:#555555 solid 1pt;
+    padding-top: 5pt;
+    text-align: center;
+    background-color:#181b21;
+}
+
+.bottom-bar.active {
+    bottom: 0 !important;
+}

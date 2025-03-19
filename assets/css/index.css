@@ -1,3 +1,5 @@
+/* General */
+
 :root {
     --bg-color:#191b1e;
     --left-bar-width: 75px;
@@ -13,14 +15,14 @@ body {
 }
 
 a {
-    transition: all ease 0.3s;
-    text-decoration: none;
-    color:#3575ff;
+    transition: all linear 0.1s !important;
+    text-decoration: none !important;
+    color:#6093ff !important;
 }
 
 a:hover {
-    color:#35bdff;
-    text-decoration: none;
+    color:#a5c2ff !important;
+    text-decoration: none !important;
 }
 
 hr {
@@ -165,11 +167,13 @@ hr {
 .result-blank > p {
     width: calc( 100% - var(--search-left-offset) - 14px );
     left: calc( var(--search-left-offset) + 14px );
-    top: 20px;
+    top: 10px;
     display: inline-block;
     position: absolute;
     user-select: none;
     font-size: 10pt;
+    word-wrap:break-word;
+    word-break:break-all;
 }
 
 .result-blank > span {
@@ -268,6 +272,64 @@ hr {
 
 #download::-webkit-scrollbar {
     display: none;
+}
+
+/* Detail Page */
+
+#videoInfoDiv {
+    overflow-y: auto;
+    max-height: calc( 100vh - 40px - 65px );
+}
+
+#videoInfoDiv::-webkit-scrollbar {
+    background-color: #0000;
+    width:6pt;
+}
+
+#videoInfoDiv::-webkit-scrollbar-thumb {
+    background-color: #aaa;
+    border-radius: 3pt;
+}
+
+#videoInfoDiv > table {
+    margin-top: 10pt;
+    max-width: 672px;
+}
+
+#videoInfoDiv > table > * {
+    word-wrap:break-word;
+    word-break:break-all;
+    text-align: center;
+    user-select: none;
+}
+
+td[type="copyLink"], td[type="downloadLink"], th[scope="row"], th[scope="col"] {
+    transition: all ease-out 1.0s;
+}
+
+th[scope="row"]:hover, th[scope="col"]:nth-child(1):hover {
+    /* background-color: #144999ab; */
+    cursor: unset;
+}
+
+td[type="copyLink"]:hover, th[scope="col"]:nth-child(2):hover {
+    /* background-color: #144999ab; */
+    cursor: pointer;
+}
+
+td[type="downloadLink"]:hover, th[scope="col"]:nth-child(3):hover {
+    /* background-color: #144999ab; */
+    cursor: pointer;
+}
+
+td[type="copyLink"]:active, td[type="downloadLink"]:active {
+    transition: all ease 0.1s;
+    background-color: #189914ab;
+    cursor: pointer;
+}
+
+#videoInfoDiv > img {
+    margin-bottom: 1rem;
 }
 
 /* Settings Page */

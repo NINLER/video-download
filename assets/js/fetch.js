@@ -1,27 +1,4 @@
-function getUrl(url)
-{
-    return new Promise((res,rej)=>{
-        let pid=url.match(/^.*(BV[^\/]+).*$/),title,cid,finurl;
-        if(!pid) console.log("Error : No BV id."),rej();
-        pid=pid.at(1);
-        fetch(`https://api.bilibili.com/x/web-interface/view?bvid=${pid}`,config).then(async (resp)=>{
-            let data=await resp.text();
-            data=JSON.parse(data);
-            console.log(data,data.pages);
-            title=data.data.title,cid=data.data.cid;
-            fetch(`https://api.bilibili.com/x/player/playurl?bvid=${pid}&cid=${cid}&qn=112`,config).then(async (resp)=>{
-                let text=await resp.text();
-                text=JSON.parse(text);
-                console.log(text.data.durl);
-                finurl=text.data.durl.at(0).backup_url;
-                finurl.push(text.data.durl.at(0).url);
-                res({title:title,url:finurl});
-            });
-        });
-    });
-}
-
-function downloadFile(url,filename)
+function downloadFile(url,filename,suf="mp4")
 {
     console.log("Download",url,filename);
     let datasize=0;
@@ -36,9 +13,9 @@ function downloadFile(url,filename)
             const banned='\\/:*?"<>|',replaced="         ";
             for(let i=0; i<banned.length; i++) filename=filename.replaceAll(banned[i],replaced[i]);
             // filename='a';
-            fs.writeFile(path.join(localUrl,`${filename}.mp4`),'',async (error)=>{
+            fs.writeFile(path.join(localUrl,`${filename}.${suf}`),'',async (error)=>{
                 if(error) return console.log('fs write err ',error);
-                const str=fs.createWriteStream(path.join(localUrl,`${filename}.mp4`));
+                const str=fs.createWriteStream(path.join(localUrl,`${filename}.${suf}`));
                 let taskid=await addNewTask(filename,datasize);
                 request.get(url[id],config).pipe(str)
                 .on('drain',()=>{
@@ -62,14 +39,6 @@ function downloadFile(url,filename)
         renderProgress();
     });
 })()
-
-function downloadVideo(url)
-{
-    getUrl(url).then((resp)=>{
-        console.log(resp);
-        downloadFile(resp.url,resp.title);
-    },(err)=>{console.log(err)});
-};
 
 function test(url)
 {

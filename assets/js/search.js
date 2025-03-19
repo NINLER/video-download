@@ -25,10 +25,10 @@ function renderResult(pid,clear)
     else target.innerHTML+=`<div id="moreContents" to="${pid+1}"><br><div>Loading ...</div><br><div>`;
     let blanks=document.querySelectorAll('.result-blank');
     for(let it of blanks)
-        it.addEventListener('click',()=>{
-            if(!window.confirm("\nAre you sure to download video "+it.getAttribute('title')+" ?")) return;
-            changePage(document.getElementById('toDownload'));
-            downloadVideo(it.getAttribute('to'));
+        it.addEventListener('click',async ()=>{
+            // if(!window.confirm("\nAre you sure to download video "+it.getAttribute('title')+" ?")) return;
+            let res=await checkVideo(it.getAttribute('to'));
+            loadVideoInfo(res); changePage('videoInfo');
         });
     searching=false;
     return;
@@ -39,7 +39,7 @@ function searchContent(content,page=1,clear=true)
     if(searching) return; searching=true;
     let xhr=new XMLHttpRequest();
     // console.log(content,page,clear)
-    xhr.open("GET",`https://search.bilibili.com/all?keyword=${content}&search_source=1${(page==1? "":`&page=${page}&o=30)`)}`);
+    xhr.open("GET",`https://search.bilibili.com/all?keyword=${encodeURIComponent(content)}&search_source=1${(page==1? "":`&page=${page}&o=30)`)}`);
     xhr.send();
     xhr.onreadystatechange=()=>{
         if(!(xhr.readyState==4&&(xhr.status>=200&&xhr.status<300||xhr.status==302))) return;
@@ -50,7 +50,9 @@ function searchContent(content,page=1,clear=true)
             // console.log($('.video.i_wrapper.search-all-list'),$('.search-page.search-page-video.i_wrapper.mt_xxl.pb_xxl'));
             let $video=$('.video.i_wrapper.search-all-list');
             if(!$video.length) $video=$('.search-page.search-page-video.i_wrapper.mt_xxl.pb_xxl');
-            $video=$video.children()[0].children;
+            $video=$video.children();
+            if(!$video.length) throw new Error("No video selected.");
+            $video=$video[0].children;
             // console.log($video);
             source=[],sourceUrl=[],duration=[],author=[];
             for(let i=1; i<$video.length-1; i++)
@@ -87,19 +89,24 @@ function checkVideo(url="")
                 let body=await resp.text();
                 let title=body.match(/<title data-vue-meta="true">([^<]*)<\/title>/).at(1);
                 console.log(title,resp); console.log(body);
-                return res({status:true,title:title,url:url});
+                let bvid=(url.match(/^(BV[0-9a-zA-Z]*)$/)||["",""]).at(1);
+                let avid=(url.match(/^(av[0-9]*)$/)||["",""]).at(1);
+                return res({status:true,title:title,url:url,bvid,avid});
             });
         }
-        else if(url.match(/^(?:https:\/\/|)(?:www\.|)bilibili\.com\/video\/(.*)$/))
+        else if(url.match(/^(?:https:|)(?:\/\/|)(?:www\.|)bilibili\.com\/video\/(.*)$/))
         {
             if(url.indexOf('?')!=-1) url=url.substring(0,url.indexOf('?'));
             if(url.indexOf('www.')==-1) url="www."+url;
-            if(url.indexOf('https://')==-1) url="https://"+url;
+            if(url.indexOf('//')==-1) url="//"+url;
+            if(url.indexOf('https:')==-1) url="https:"+url;
             fetch(url).then(async (resp)=>{
                 let body=await resp.text();
                 // console.log(body);
                 let title=body.match(/"pic":"[^"]+","title":"([^"]+)"/).at(1);
-                return res({status:true,title:title,url:url});
+                let bvid=(url.match(/(BV[0-9a-zA-Z]*)/)||["",""]).at(1);
+                let avid=(url.match(/(av[0-9]*)/)||["",""]).at(1);
+                return res({status:true,title:title,url:url,bvid,avid});
             });
         }
         else return res({status:false});
@@ -115,8 +122,9 @@ function checkVideo(url="")
             // console.log(result);
             if(result.status)
             {
-                if(!window.confirm("\nAre you sure to download video "+result.title+" ?")) return;
-                changePage(document.getElementById('toDownload')); downloadVideo(result.url);
+                // if(!window.confirm("\nAre you sure to download video "+result.title+" ?")) return;
+                // changePage('download'); downloadVideo(result.url);
+                loadVideoInfo(result); changePage('videoInfo');
             }
             else
             {

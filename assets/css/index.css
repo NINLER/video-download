@@ -270,6 +270,70 @@ hr {
     display: none;
 }
 
+/* Settings Page */
+
+#settings > div > input {
+    position: absolute;
+    transition: all ease 0.2s;
+    right:10pt;
+    border: none;
+    border-bottom: #aaa solid 1pt!important;
+    background-color: #191b1e;
+    padding-left: 10pt;
+    width: 250pt;
+    color:white;
+    text-align: center;
+}
+
+#settings > div > input:focus-visible {
+    outline: none;
+    width:calc(100% - 10pt);
+}
+
+#loginHint {
+    margin-top:10pt;
+}
+
+#loginHint.success {
+    color:#00ff00;
+}
+
+#loginHint.failed {
+    color:#ff5252;
+}
+
+/* Rewrite classes of the captcha */
+
+#captchaCheckBox {
+    margin-top: 15pt;
+}
+
+.geetest_holder.geetest_wind {
+    width: calc(100% - 10pt) !important;
+}
+
+.geetest_radar_btn {
+    background-image: none !important;
+    background: none !important;
+}
+
+.geetest_success_radar_tip {
+    color: #00ff6a !important;
+}
+
+.geetest_radar_tip_content {
+    color: white !important;
+}
+
+.geetest_success_btn {
+    background: #0f180e !important;
+    border-color: #00ff6a;
+}
+
+.geetest_success_box {
+    opacity: 0 !important;
+}
+
 /* Bottom bar */
 
 .bottom-bar {

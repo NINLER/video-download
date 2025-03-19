@@ -1,27 +1,3 @@
-// const puppeteer=require('puppeteer');
-const {exec}=require('child_process');
-const request=require('request');
-const path=require('node:path');
-const fs=require('node:fs');
-const os=require('node:os');
-
-const config={
-    "headers":{
-        "Referer":"https://www.bilibili.com",
-        "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
-    }
-};
-
-var localUrl=`C:\\Users\\${os.userInfo().username}\\Documents\\videoDownload`;
-var totSize=0,nowSize=0,nowTasks=0,taskTot=0,taskProgress=[0];
-
-//     localUrl : video url
-//      totSize : file total size
-//      nowSize : downloaded total size
-//     nowTasks : the number of tasks
-//      taskTot : task id counter
-// taskProgress : the progress of each task
-
 function getUrl(url)
 {
     return new Promise((res,rej)=>{

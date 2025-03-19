@@ -1,8 +1,3 @@
-const cheerio=require('cheerio');
-
-let source=[],sourceUrl=[],duration=[],author=[],searching=false,loaded=new Set();
-// source [img,title]
-
 function renderResult(pid,clear)
 {
     let target=document.getElementById('searchResult');
@@ -117,7 +112,7 @@ function checkVideo(url="")
         if(tar=="Enter")
         {
             let result=await checkVideo(document.getElementById('searchBar').value);
-            console.log(result);
+            // console.log(result);
             if(result.status)
             {
                 if(!window.confirm("\nAre you sure to download video "+result.title+" ?")) return;

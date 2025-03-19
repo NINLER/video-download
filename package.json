@@ -11,5 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "request": "^2.88.2"
-  }
+  },
+  "chromium-args": "--allow-running-insecure-content --disable-web-security --ignore-certificate-errors"
 }

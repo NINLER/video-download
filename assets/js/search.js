@@ -39,33 +39,29 @@ function searchContent(content,page=1,clear=true)
     if(searching) return; searching=true;
     let xhr=new XMLHttpRequest();
     // console.log(content,page,clear)
-    xhr.open("GET",`https://search.bilibili.com/all?keyword=${encodeURIComponent(content)}&search_source=1${(page==1? "":`&page=${page}&o=30)`)}`);
+    xhr.open("GET",`https://search.bilibili.com/all?keyword=${encodeURIComponent(content)}&search_source=1${(page==1? "":`&page=${page}&o=30`)}`);
     xhr.send();
     xhr.onreadystatechange=()=>{
         if(!(xhr.readyState==4&&(xhr.status>=200&&xhr.status<300||xhr.status==302))) return;
         // console.log(xhr.response);
         try {
-            let data=xhr.response;
-            let $=cheerio.load(data);
-            // console.log($('.video.i_wrapper.search-all-list'),$('.search-page.search-page-video.i_wrapper.mt_xxl.pb_xxl'));
-            let $video=$('.video.i_wrapper.search-all-list');
-            if(!$video.length) $video=$('.search-page.search-page-video.i_wrapper.mt_xxl.pb_xxl');
-            $video=$video.children();
-            if(!$video.length) throw new Error("No video selected.");
-            $video=$video[0].children;
-            // console.log($video);
-            source=[],sourceUrl=[],duration=[],author=[];
-            for(let i=1; i<$video.length-1; i++)
+            console.log("Search",content,page,clear);
+            let data=xhr.response??"";
+            let stPos=data.indexOf("window.__pinia");
+            let edPos=data.indexOf("</script>",stPos);
+            // console.log(stPos,edPos,data.slice(stPos,edPos));
+            if(stPos==-1||edPos==-1) throw Error(`Can't find video info JSON. stPos=${stPos}, edPos=${edPos}`);
+            let jsonResp=eval(data.slice(stPos,edPos));
+            let videoList=
+                jsonResp?.searchTypeResponse?.searchTypeResponse?.result??
+                jsonResp?.searchResponse?.searchAllResponse?.result?.at(-1)?.data??
+                []
+            for(let video of videoList)
             {
-                let it=$video[i]; if(it?.attribs?.class=="load-more-trigger") continue;
-                let temp1=it?.children?.at(0)?.children?.at(1)?.children?.at(1)?.children?.at(0)?.children?.at(0)?.children?.at(1)?.children?.at(3);
-                let temp2=it?.children?.at(0)?.children?.at(1)?.children?.at(1)?.children?.at(0)?.children?.at(1)?.children?.at(0);
-                let name=temp1?.attribs?.alt,img=temp1?.attribs?.src;
-                if(!name||!temp2?.children) continue;
-                let dur=temp2?.children?.at(2)?.children?.at(0).data;
-                let auth=it?.children?.at(0)?.children?.at(1)?.children?.at(2)?.children?.at(2)?.children?.at(2)?.children?.at(0)?.children?.at(1)?.children?.at(0).data;
-                let link=it?.children?.at(0)?.children?.at(1)?.children?.at(2)?.children?.at(2)?.children?.at(0)?.attribs?.href;
-                // console.log(i,name,img,dur,auth,link);
+                if(video.type!=="video") continue;
+                let auth=video.author,img=video.pic,dur=video.duration,link=`//www.bilibili.com/video/${video.bvid}/`;
+                let name=video.title.replaceAll("<em class=\"keyword\">","").replaceAll("<\/em>","")
+                // console.log(name,img,dur,auth,link);
                 source.push([img,name]); sourceUrl.push(link); duration.push(dur); author.push(auth);
             }
             renderResult(page,clear);

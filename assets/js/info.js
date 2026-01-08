@@ -17,7 +17,7 @@ function getVideoUrl(bvid,cid)
             let tar=await fetch(`https://api.bilibili.com/x/player/playurl?bvid=${bvid}&cid=${cid}&qn=${it.qn}&fnval=1&platform=web`,config);
             tar=JSON.parse(await tar.text());
             if(tar.data.quality!==it.qn) continue;
-            // console.log(it,tar);
+            console.log(it,tar);
             let finurl=tar.data.durl.at(0).backup_url;
             finurl.push(tar.data.durl.at(0).url);
             videoLinks.push({type:it.type,link:finurl});
@@ -99,7 +99,7 @@ function loadVideoInfo(result)
         else
         {
             console.log(self,content,name);
-            if(!window.confirm("\nAre you sure to download video "+name+" ?")) return;
+            if(!window.confirm("\nAre you sure to download "+name+" ?")) return;
             changePage('download'); downloadFile(content.split(' '),name,suf);
         }
     });
